@@ -49,18 +49,12 @@ The app will open in your browser at `http://localhost:8501`.
 
 ## Tech Stack
 
+- Python 3.10+
+- Streamlit
+- scikit-learn (Random Forest + StandardScaler pipeline)
+- pandas, numpy, matplotlib
 
-## Deployment (Streamlit Cloud)
-
-This app is ready to deploy on [Streamlit Cloud](https://streamlit.io/cloud):
-
-1. Push this repository to GitHub.
-2. Go to [share.streamlit.io](https://share.streamlit.io) and sign in with GitHub.
-3. Click **New app**, select this repo, branch `main`, and main file `app.py`.
-4. Click **Deploy** -- Streamlit Cloud will install dependencies from
-   `requirements.txt` and start the app automatically.
-
-No Dockerfile, Procfile, or server configuration needed.
+Pushed to https://github.com/Dublidori/breast-cancer-diagnosis-predictor.
 
 ## Disclaimer
 
