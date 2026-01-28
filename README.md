@@ -54,8 +54,9 @@ The app will open in your browser at `http://localhost:8501`.
 - scikit-learn (Random Forest + StandardScaler pipeline)
 - pandas, numpy, matplotlib
 
-Pushed to https://github.com/Dublidori/breast-cancer-diagnosis-predictor.
-
+The dataset comes from the **University of Wisconsin** (1995) and contains
+569 real cases: 357 benign and 212 malignant. A cleaned mirror of this
+dataset is available on Kaggle: https://www.kaggle.com/datasets/uciml/breast-cancer-wisconsin-data/data
 ## Disclaimer
 
 This is a prototype for educational purposes only. It is not a medical
