@@ -4,6 +4,10 @@ model.py -- Breast cancer classification model.
 Loads the sklearn breast cancer dataset, trains a Random Forest classifier
 inside a Pipeline (StandardScaler + RandomForestClassifier), evaluates it,
 and exposes prediction functions.
+
+Copyright (c) 2026 Miguel
+Licensed under the Creative Commons Attribution-NonCommercial-ShareAlike
+4.0 International (CC BY-NC-SA 4.0). See https://creativecommons.org/licenses/by-nc-sa/4.0/
 """
 
 import numpy as np

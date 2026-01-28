@@ -2,6 +2,10 @@
 app.py -- Streamlit web app for breast cancer diagnosis prediction.
 
 Run with: streamlit run app.py
+
+Copyright (c) 2026 Miguel
+Licensed under the Creative Commons Attribution-NonCommercial-ShareAlike
+4.0 International (CC BY-NC-SA 4.0). See https://creativecommons.org/licenses/by-nc-sa/4.0/
 """
 
 import streamlit as st

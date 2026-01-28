@@ -49,10 +49,6 @@ The app will open in your browser at `http://localhost:8501`.
 
 ## Tech Stack
 
-- Python 3.10+
-- Streamlit
-- scikit-learn (Random Forest + StandardScaler pipeline)
-- pandas, numpy, matplotlib
 
 ## Deployment (Streamlit Cloud)
 
@@ -70,3 +66,17 @@ No Dockerfile, Procfile, or server configuration needed.
 
 This is a prototype for educational purposes only. It is not a medical
 diagnostic tool.
+
+---
+
+## License
+
+This project (source code and documentation) is licensed under the
+Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
+(CC BY-NC-SA 4.0). See https://creativecommons.org/licenses/by-nc-sa/4.0/ for
+the full license text.
+
+Source code files include a short header with the same license. Third-party
+dependencies listed in `requirements.txt` retain their own licenses and are
+not automatically re-licensed by this project; review them individually if
+you plan to redistribute derivatives.
