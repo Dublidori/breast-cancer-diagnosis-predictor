@@ -4,6 +4,8 @@ A prototype web application that predicts whether a breast tumor is
 **benign** or **malignant** based on cell nucleus measurements, using a
 Random Forest classifier trained on the Wisconsin Breast Cancer Dataset.
 
+Demo: https://breastcancerdiagnosispredict.streamlit.app/
+
 ## Quick Start
 
 ### 1. Create and activate a virtual environment
