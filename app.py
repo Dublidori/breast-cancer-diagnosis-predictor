@@ -19,7 +19,7 @@ from model import train_model, predict
 st.set_page_config(
     page_title="Breast Cancer Diagnosis",
     layout="wide",
-    initial_sidebar_state="expanded",
+    initial_sidebar_state="auto",
 )
 
 # Custom CSS for responsive layout and polished UI
@@ -27,11 +27,12 @@ st.markdown("""
 <style>
     /* Sidebar */
     [data-testid="stSidebar"] {
-        min-width: 380px;
-        max-width: 420px;
+        min-width: clamp(280px, 30vw, 380px);
+        max-width: min(420px, 100vw);
     }
     [data-testid="stSidebar"] .block-container {
         padding-top: 1rem;
+        padding-bottom: 1rem;
     }
     [data-testid="stSidebar"] [data-testid="stSlider"] {
         margin-bottom: 0.3rem;
@@ -40,11 +41,15 @@ st.markdown("""
     /* Main content -- responsive */
     .main .block-container {
         padding-top: 1.5rem;
-        max-width: 95%;
+        padding-bottom: 2.5rem;
+        padding-left: 1.25rem;
+        padding-right: 1.25rem;
+        max-width: 1200px;
     }
 
     /* ---- Diagnosis card ---- */
     .dx-card {
+        box-sizing: border-box;
         padding: 1.8rem 1.5rem;
         border-radius: 14px;
         text-align: center;
@@ -124,6 +129,7 @@ st.markdown("""
         flex-wrap: wrap;
     }
     .stat-pill {
+        box-sizing: border-box;
         flex: 1;
         min-width: 120px;
         padding: 0.7rem 1rem;
@@ -144,6 +150,7 @@ st.markdown("""
 
     /* ---- Test-tab result cards ---- */
     .test-card {
+        box-sizing: border-box;
         padding: 1.2rem;
         border-radius: 12px;
         text-align: center;
@@ -182,12 +189,112 @@ st.markdown("""
         font-weight: 600;
     }
 
+    /* ---- Docs measurement grid ---- */
+    .measurement-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 0.85rem;
+        margin-top: 0.75rem;
+    }
+    .measurement-card {
+        padding: 1rem;
+        border-radius: 12px;
+        border: 1px solid #dbe4ee;
+        background: #ffffff;
+        box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+    }
+    .measurement-card h4 {
+        margin: 0 0 0.35rem 0;
+        font-size: 1rem;
+        color: #1a1a2e;
+    }
+    .measurement-card p {
+        margin: 0;
+        color: #475569;
+        font-size: 0.92rem;
+        line-height: 1.5;
+    }
+
     /* ---- Misc ---- */
     [data-testid="stMetricValue"] {
         font-size: 1.8rem;
     }
     .stTabs [data-baseweb="tab-list"] { gap: 4px; }
     .stTabs [data-baseweb="tab"] { padding: 10px 24px; }
+
+    @media (max-width: 900px) {
+        [data-testid="stSidebar"] {
+            min-width: min(320px, 100vw) !important;
+            max-width: 100vw !important;
+        }
+
+        .main .block-container {
+            max-width: 100%;
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+
+        .main [data-testid="stHorizontalBlock"] {
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .main [data-testid="column"] {
+            width: 100% !important;
+            flex: 1 1 100% !important;
+        }
+
+        .stTabs [data-baseweb="tab-list"] {
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .stTabs [data-baseweb="tab"] {
+            flex: 1 1 160px;
+            justify-content: center;
+            min-height: 3rem;
+            padding: 0.75rem 1rem;
+            white-space: normal;
+        }
+
+        .dx-card,
+        .conf-card,
+        .test-card {
+            padding: 1.25rem 1rem;
+        }
+
+        .dx-card .dx-value,
+        .conf-card .conf-value {
+            font-size: 1.75rem;
+        }
+
+        .stats-row {
+            gap: 0.75rem;
+        }
+
+        .stat-pill {
+            min-width: calc(50% - 0.375rem);
+        }
+
+        .stButton > button {
+            width: 100%;
+        }
+    }
+
+    @media (max-width: 640px) {
+        .main .block-container {
+            padding-left: 0.75rem;
+            padding-right: 0.75rem;
+        }
+
+        .stat-pill {
+            min-width: 100%;
+        }
+
+        .measurement-grid {
+            grid-template-columns: 1fr;
+        }
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -225,6 +332,57 @@ CLEAN_NAMES = {
     "worst symmetry": "Symmetry",
     "worst fractal dimension": "Fractal Dim.",
 }
+
+MEASUREMENT_EXPLANATIONS = [
+    (
+        "Radius",
+        "How big the nucleus is: the average distance from the center to the edge. "
+        "Cancerous cells tend to be larger.",
+    ),
+    (
+        "Texture",
+        "How uniform the grayscale shading is across the nucleus surface. "
+        "Cancerous nuclei often have uneven texture.",
+    ),
+    (
+        "Perimeter",
+        "The total length around the edge of the nucleus. Bigger and more irregular "
+        "nuclei have a longer perimeter.",
+    ),
+    (
+        "Area",
+        "The total surface area of the nucleus. Larger nuclei have a larger area.",
+    ),
+    (
+        "Smoothness",
+        "How smooth or bumpy the edge of the nucleus is. Cancerous nuclei often have "
+        "rougher, more irregular edges.",
+    ),
+    (
+        "Compactness",
+        "How round versus elongated the nucleus is. More irregular shapes score higher.",
+    ),
+    (
+        "Concavity",
+        "How much the edge of the nucleus caves inward. Cancerous nuclei often have "
+        "more dents and indentations.",
+    ),
+    (
+        "Concave Points",
+        "How many separate indentations exist along the edge. This is one of the most "
+        "important signals for detection.",
+    ),
+    (
+        "Symmetry",
+        "How similar the nucleus looks when compared across different sides. "
+        "Cancer cells are often less symmetric.",
+    ),
+    (
+        "Fractal Dimension",
+        "How complex or crinkly the nucleus boundary is. Higher values mean a more "
+        "irregular edge.",
+    ),
+]
 
 
 # Model loading (cached -- trains only once)
@@ -317,7 +475,13 @@ def create_radar_chart(input_vals, arts):
     ax.set_xticklabels(labels, size=9)
     ax.set_ylim(0, 1.15)
     ax.set_yticklabels([])
-    ax.legend(loc="upper right", bbox_to_anchor=(1.35, 1.1), fontsize=9)
+    ax.legend(
+        loc="upper center",
+        bbox_to_anchor=(0.5, -0.12),
+        ncol=2,
+        fontsize=9,
+        frameon=False,
+    )
     ax.set_title("Mean Feature Values (normalized)", size=12, pad=20)
     ax.grid(True, alpha=0.3)
     plt.tight_layout()
@@ -327,6 +491,10 @@ def create_radar_chart(input_vals, arts):
 # --- Main Area ---
 
 st.title("Breast Cancer Diagnosis Predictor")
+st.caption(
+    "Use the sidebar sliders or load a sample from the test tab. "
+    "On smaller screens, open the sidebar with the toggle."
+)
 
 tab_predict, tab_test, tab_docs = st.tabs([
     "Prediction",
@@ -397,7 +565,7 @@ with tab_predict:
                 "Current input vs dataset average (mean values, normalized 0-1)"
             )
             fig_radar = create_radar_chart(input_values, artifacts)
-            st.pyplot(fig_radar)
+            st.pyplot(fig_radar, use_container_width=True)
             plt.close(fig_radar)
 
     with col_importance:
@@ -411,7 +579,7 @@ with tab_predict:
                 "Importance": artifacts.feature_importances,
             }).sort_values("Importance", ascending=True)
 
-            fig_imp, ax_imp = plt.subplots(figsize=(8, 7))
+            fig_imp, ax_imp = plt.subplots(figsize=(8, 9))
             colors = [
                 "#4CAF50" if imp > importance_df["Importance"].median()
                 else "#90CAF9"
@@ -424,10 +592,11 @@ with tab_predict:
             )
             ax_imp.set_xlabel("Importance")
             ax_imp.set_title("Random Forest Feature Importances")
+            ax_imp.tick_params(axis="y", labelsize=8)
             ax_imp.spines["top"].set_visible(False)
             ax_imp.spines["right"].set_visible(False)
             plt.tight_layout()
-            st.pyplot(fig_imp)
+            st.pyplot(fig_imp, use_container_width=True)
             plt.close(fig_imp)
 
     # Model Evaluation Details
@@ -480,9 +649,10 @@ with tab_test:
             st.session_state.pop(f"feature_{i}", None)
 
     st.button(
-        "Load sample into sidebar inputs",
+        "Load sample into inputs",
         type="primary",
         on_click=load_sample,
+        use_container_width=True,
     )
 
     st.markdown("")
@@ -565,7 +735,7 @@ and gets the diagnosis right about **96% of the time**.
 1. Click the **Test with Real Data** tab above.
 2. Pick any **sample number** from 0 to 568 -- each one is a real patient.
 3. You can filter to show only malignant or benign cases.
-4. Click the blue **Load sample into sidebar inputs** button.
+4. Click the blue **Load sample into inputs** button.
 5. Go back to the **Prediction** tab -- you'll see the model's diagnosis
    and how confident it is.
 6. The Test tab also shows whether the model got it right or wrong.
@@ -574,6 +744,7 @@ and gets the diagnosis right about **96% of the time**.
     st.markdown("#### Option B: Enter values manually")
     st.markdown("""
 1. Open the **sidebar** on the left (the panel with sliders).
+   On smaller screens, use the sidebar toggle first.
 2. Expand one of the three groups (Mean Values, Standard Error, Worst Values).
 3. Move the sliders to set each measurement.
 4. The **Prediction** tab updates live as you adjust values.
@@ -624,20 +795,19 @@ Each group contains the same 10 measurements. Here's what they actually measure
 about the cell nuclei in the biopsy image:
 """)
 
-    st.markdown("""
-| Measurement | Plain English explanation |
-|---|---|
-| **Radius** | How big the nucleus is -- the average distance from the center to the edge. Cancerous cells tend to be **larger**. |
-| **Texture** | How uniform the grayscale shading is across the nucleus surface. Cancerous nuclei often have **uneven texture**. |
-| **Perimeter** | The total length around the edge of the nucleus. Bigger and more irregular nuclei have a **longer perimeter**. |
-| **Area** | The total surface area of the nucleus. Directly related to radius -- larger nuclei = larger area. |
-| **Smoothness** | How smooth or bumpy the edge of the nucleus is. Cancerous nuclei often have **rougher, more irregular edges**. |
-| **Compactness** | How round vs. elongated the nucleus is (calculated from perimeter and area). A perfect circle has low compactness. **Irregular shapes** score higher. |
-| **Concavity** | How much the edge of the nucleus **caves inward**. Healthy nuclei are fairly round; cancerous ones often have dents and indentations. |
-| **Concave Points** | How many separate **indentations** exist along the edge. More concave points = more irregular shape. This is one of the **most important** features for detection. |
-| **Symmetry** | How symmetric the nucleus is -- would it look the same if you flipped it? Cancer cells are often **asymmetric**. |
-| **Fractal Dimension** | How complex or "crinkly" the edge is (like measuring a coastline). Higher values mean a more **complex, irregular boundary**. |
-""")
+    measurement_cards = "".join(
+        f"""
+        <div class="measurement-card">
+            <h4>{name}</h4>
+            <p>{description}</p>
+        </div>
+        """
+        for name, description in MEASUREMENT_EXPLANATIONS
+    )
+    st.markdown(
+        f'<div class="measurement-grid">{measurement_cards}</div>',
+        unsafe_allow_html=True,
+    )
 
     st.markdown("---")
 

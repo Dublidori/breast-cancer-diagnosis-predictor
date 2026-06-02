@@ -36,6 +36,8 @@ The app will open in your browser at `http://localhost:8501`.
   built-in breast cancer dataset (569 samples, 30 features).
 - The model is cached so training only happens once per server session.
 - Adjust the 30 input features in the sidebar to get a real-time prediction.
+- The layout adapts for phones and tablets, including stacked content areas,
+  wrapped tabs, and a mobile-friendly sidebar.
 - The main area shows the diagnosis (Benign/Malignant) with a confidence score.
 - A radar chart visualizes your input values compared to the dataset average.
 
